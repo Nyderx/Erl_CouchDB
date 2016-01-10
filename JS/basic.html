@@ -1,0 +1,142 @@
+<html>
+<head>
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<script src="jquery-1.11.3.min.js"></script>
+<title>CouchDB</title>
+</head>
+
+<body>
+
+
+<script type="text/javascript">
+var address = "http://localhost:5984/";
+
+function get_all_dbs() {
+	var xmls = new XMLHttpRequest();
+	
+	xmls.onreadystatechange = function() {
+		if ( xmls.readyState == 4 ) {
+			$("#all_dbs").html(JSON.stringify(JSON.parse(xmls.responseText), null, 2));
+		}
+	};
+	var url = address.concat("_all_dbs");
+	xmls.open("GET", url, true);
+	xmls.setRequestHeader("Cache-Control", "no-cache");
+	xmls.send();
+}
+
+function create_db(name) {
+	var xmls = new XMLHttpRequest();
+
+	xmls.onreadystatechange = function() {
+		if(xmls.readyState == 4) {
+			alert("Database created");
+		}
+	};
+	var url = address.concat(name);
+	xmls.open("PUT", url, true);
+	xmls.send();
+}
+
+function delete_db(name) {
+	var xmls = new XMLHttpRequest();
+	
+	xmls.onreadystatechange = function() {
+		if(xmls.readyState == 4) {
+			alert("Database deleted");
+		}
+	};
+	var url = address.concat(name);
+	xmls.open("DELETE", url, true);
+	xmls.send();
+}
+
+function add_doc(db_name, key, value) {
+	var xmls = new XMLHttpRequest();
+
+	xmls.onreadystatechange = function() {
+		if(xmls.readyState == 4) {
+			alert("Document created");
+		}
+	};
+	var url = address.concat(db_name);
+	var j = {key:value};
+	alert(JSON.stringify(j));
+	xmls.open("POST", url, true);
+	xmls.setRequestHeader("Content-Type", "application/json");
+	xmls.send(JSON.stringify(j));
+}
+
+
+function get_docs(name) {
+	var xmls = new XMLHttpRequest();
+	
+	xmls.onreadystatechange = function() {
+		if ( xmls.readyState == 4 ) {
+			$("#all_docs").html(JSON.stringify(JSON.parse(xmls.responseText), null, 2));
+		}
+	};
+	var url = address.concat(name);
+	url = url.concat("/_all_docs");
+
+	xmls.open("GET", url, true);
+	xmls.send(null);
+}
+
+function get_doc(name, uid) {
+	var xmls = new XMLHttpRequest();
+	
+	xmls.onreadystatechange = function() {
+		if ( xmls.readyState == 4 ) {
+			$("#doc").html(JSON.stringify(JSON.parse(xmls.responseText), null, 2));
+		}
+	};
+	var url = address.concat(name);
+	url = url.concat("/");
+	url = url.concat(uid);
+
+	xmls.open("GET", url, true);
+	xmls.send();
+}
+</script>
+
+<h3>All databases</h3>
+<pre id="all_dbs">
+</pre>
+<button onclick="get_all_dbs();">Get all dbs</button>
+<hr>
+
+<h3>Create new database</h3>
+DB name: <input type="text" name="new_name" id="new_db_name" /> <br />
+<button onclick="create_db($('#new_db_name').val());">Create new db</button>
+<hr>
+
+<h3>Delete database</h3>
+DB name: <input type="text" name="delete_name" id="delete_db_name" /> <br />
+<button onclick="delete_db($('#delete_db_name').val());">Delete db</button>
+<hr>
+
+<h3>Add document</h3>
+DB name: <input type="text" id="doc_db_name" value="Erl"/> <br />
+Key:Value <input type="text" id="doc_key" value="Key"/> : 
+<input type="text" id="doc_value" value="Value"/> <br />
+<button onclick="add_doc($('#doc_db_name').val(), $('#doc_key').val(), $('#doc_value').val());">Add document</button>
+<hr>
+
+<h3>Get id of all docs from database</h3>
+DB name: <input type="text" id="all_db_name" value="Erl"/> <br />
+<button onclick="get_docs($('#all_db_name').val());">Get</button>
+<pre id="all_docs"></pre>
+<hr>
+
+<h3>Get doc from database</h3>
+DB name: <input type="text" id="doc_get_db_name" value="Erl"/> <br />
+Doc UID: <input type="text" id="doc_uid" value="Doc UID"/> <br />
+<button onclick="get_doc($('#doc_get_db_name').val(), $('#doc_uid').val());">Get</button>
+<pre id="doc"></pre>
+<hr>
+
+</body>
+
+
+</html>
